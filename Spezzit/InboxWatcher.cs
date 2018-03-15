@@ -18,7 +18,9 @@ namespace Spezzit
         }
 
         public void OnNext( PrivateMessage value ) {
-            if (!value.Unread) return;
+            if (!value.Unread) {
+                return;
+            }
 
             if (value.IsComment || !value.Subject.StartsWith("invitation to moderate")) {
                 value.SetAsReadAsync().Wait();
@@ -28,7 +30,8 @@ namespace Spezzit
             string subname = value.Subject.Replace("invitation to moderate /r/", "");
             var sub = RedditSharp.Things.Subreddit.GetByNameAsync(Program.RedditAgent, subname).Result;
             sub.AcceptModeratorInviteAsync().Wait();
-
+            Program.CheckLoggers();
+            value.SetAsReadAsync().Wait();
         }
 
         public void Run() {
